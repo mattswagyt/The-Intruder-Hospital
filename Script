@@ -1,0 +1,217 @@
+-- Roblox Lua Script for "The Intruder - Mental Hospital" Map (By BMF)
+-- Script handles a draggable UI with multiple functionalities
+
+-- Variables
+local Players = game:GetService("Players")
+local Lighting = game:GetService("Lighting")
+local StarterGui = game:GetService("StarterGui")
+local UIS = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create UI Elements
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local LocationLabel1 = Instance.new("TextLabel")
+local LocationLabel2 = Instance.new("TextLabel")
+local ErrorLog = Instance.new("TextLabel")
+local UIListLayout = Instance.new("UIListLayout")
+
+-- UI Properties
+ScreenGui.Parent = PlayerGui
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Name = "IntruderHospitalUI"
+
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Size = UDim2.new(0, 300, 0, 450)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -225)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+
+Title.Parent = MainFrame
+Title.Text = "The Intruder - Mental Hospital (By BMF)"
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 18
+
+LocationLabel1.Parent = MainFrame
+LocationLabel1.Text = "Intruder 1 Location: Loading..."
+LocationLabel1.Size = UDim2.new(1, 0, 0, 30)
+LocationLabel1.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+LocationLabel1.TextColor3 = Color3.fromRGB(255, 255, 255)
+LocationLabel1.Font = Enum.Font.SourceSans
+LocationLabel1.TextSize = 16
+
+LocationLabel2.Parent = MainFrame
+LocationLabel2.Text = "Intruder 2 Location: Loading..."
+LocationLabel2.Size = UDim2.new(1, 0, 0, 30)
+LocationLabel2.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+LocationLabel2.TextColor3 = Color3.fromRGB(255, 255, 255)
+LocationLabel2.Font = Enum.Font.SourceSans
+LocationLabel2.TextSize = 16
+
+ErrorLog.Parent = MainFrame
+ErrorLog.Text = "Error Log: None"
+ErrorLog.Size = UDim2.new(1, 0, 0, 30)
+ErrorLog.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+ErrorLog.TextColor3 = Color3.fromRGB(255, 85, 85)
+ErrorLog.Font = Enum.Font.SourceSans
+ErrorLog.TextSize = 14
+ErrorLog.TextWrapped = true
+ErrorLog.TextYAlignment = Enum.TextYAlignment.Top
+
+UIListLayout.Parent = MainFrame
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- Toggle UI with Delete key
+UIS.InputBegan:Connect(function(input, processed)
+	if not processed and input.KeyCode == Enum.KeyCode.Delete then
+		MainFrame.Visible = not MainFrame.Visible
+	end
+end)
+
+-- Function to Create Buttons
+local function createButton(name, callback)
+	local Button = Instance.new("TextButton")
+	Button.Parent = MainFrame
+	Button.Text = name
+	Button.Size = UDim2.new(1, 0, 0, 30)
+	Button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+	Button.Font = Enum.Font.SourceSans
+	Button.TextSize = 16
+	Button.MouseButton1Click:Connect(function()
+		pcall(callback)
+	end)
+	return Button
+end
+
+-- Track Intruder Locations
+spawn(function()
+	while true do
+		local success1, result1 = pcall(function()
+			return workspace.Values.intruderPos1.Value
+		end)
+		local success2, result2 = pcall(function()
+			return workspace.Values.intruderPos2.Value
+		end)
+
+		if success1 then
+			LocationLabel1.Text = "Intruder 1 Location: " .. tostring(result1)
+		else
+			LocationLabel1.Text = "Intruder 1 Location: Error"
+			ErrorLog.Text = "Error Log: Failed to fetch intruderPos1"
+		end
+
+		if success2 then
+			LocationLabel2.Text = "Intruder 2 Location: " .. tostring(result2)
+		else
+			LocationLabel2.Text = "Intruder 2 Location: Error"
+			ErrorLog.Text = "Error Log: Failed to fetch intruderPos2"
+		end
+
+		wait(1)
+	end
+end)
+
+---------------------------------------------------------------------
+-- BUTTONS
+---------------------------------------------------------------------
+
+-- Infinite Yield
+createButton("Infinite Yield", function()
+	local success, result = pcall(function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+	end)
+	if success then
+		print("Infinite Yield executed!")
+	else
+		print("Error executing Infinite Yield:", result)
+	end
+end)
+
+-- Dark Dex
+createButton("Dark Dex", function()
+	local success, result = pcall(function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+	end)
+	if success then
+		print("Dark Dex executed!")
+	else
+		print("Error executing Dark Dex:", result)
+	end
+end)
+
+-- Teleport Helper
+local function teleportTo(pos)
+	local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+	local hrp = character:FindFirstChild("HumanoidRootPart")
+	if hrp then
+		hrp.CFrame = CFrame.new(pos)
+	end
+end
+
+-- Teleport Buttons
+createButton("Teleport to Elevator", function()
+	teleportTo(Vector3.new(97, 4, -105))
+	print("Teleported to Elevator!")
+end)
+
+createButton("Teleport to Employee-Only Room", function()
+	teleportTo(Vector3.new(178, 4, -94))
+	print("Teleported to Employee-Only Room!")
+end)
+
+createButton("Teleport to Silver Key", function()
+	teleportTo(Vector3.new(131, 4, -113))
+	print("Teleported to Silver Key!")
+end)
+
+createButton("Teleport to Gold Key", function()
+	teleportTo(Vector3.new(129, 4, -77))
+	print("Teleported to Gold Key!")
+end)
+
+-- Full Bright
+createButton("Full Bright", function()
+	Lighting.Brightness = 5
+	Lighting.ClockTime = 14
+	Lighting.FogEnd = 100000
+	Lighting.GlobalShadows = false
+	Lighting.OutdoorAmbient = Color3.new(1, 1, 1)
+	print("Full Bright activated!")
+end)
+
+-- God Mode (WIP)
+createButton("God Mode", function()
+	print("God Mode is being worked on!")
+end)
+
+-- Break Anxiety (WIP)
+createButton("Break Anxiety", function()
+	print("Break Anxiety is being worked on!")
+end)
+
+-- Win Game (WIP)
+createButton("Win Game (WIP)", function()
+	print("Win Game function is being worked on!")
+end)
+
+-- Make Easy Mode (WIP)
+createButton("Make Easy Mode", function()
+	print("Easy Mode setup is being worked on!")
+end)
+
+-- Make Nightmare Mode (WIP)
+createButton("Make Nightmare Mode", function()
+	print("Nightmare Mode setup is being worked on!")
+end)
+
+---------------------------------------------------------------------
+
+print("The Intruder - Mental Hospital Script Loaded Successfully")
