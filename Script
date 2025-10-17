@@ -167,14 +167,78 @@ createButton("Teleport to Employee-Only Room", function()
 	print("Teleported to Employee-Only Room!")
 end)
 
-createButton("Teleport to Silver Key", function()
-	teleportTo(Vector3.new(131, 4, -113))
-	print("Teleported to Silver Key!")
-end)
+-- Key ESP
+createButton("Key ESP", function()
+	print("Activating Key ESP...")
 
-createButton("Teleport to Gold Key", function()
-	teleportTo(Vector3.new(129, 4, -77))
-	print("Teleported to Gold Key!")
+	local Players = game:GetService("Players")
+	local LocalPlayer = Players.LocalPlayer
+	local Camera = workspace.CurrentCamera
+
+	-- Function to create ESP for a part
+	local function createESP(part)
+		if not part then return end
+
+		-- SelectionBox to outline the part
+		local box = Instance.new("SelectionBox")
+		box.Adornee = part
+		box.LineThickness = 0.05
+		box.SurfaceTransparency = 1
+		box.Color3 = Color3.fromRGB(255, 255, 0) -- Yellow
+		box.Parent = part
+
+		-- Tracer: Line from camera to the key
+		local tracer = Instance.new("Part")
+		tracer.Anchored = true
+		tracer.CanCollide = false
+		tracer.Transparency = 0.5
+		tracer.Size = Vector3.new(0.05, 0.05, (part.Position - Camera.CFrame.Position).Magnitude)
+		tracer.Color = Color3.fromRGB(255, 255, 0)
+		tracer.Material = Enum.Material.Neon
+		tracer.Parent = workspace
+
+		local runService = game:GetService("RunService")
+		runService.RenderStepped:Connect(function()
+			if part and tracer then
+				local dir = part.Position - Camera.CFrame.Position
+				tracer.CFrame = CFrame.new(Camera.CFrame.Position, part.Position) * CFrame.new(0, 0, -dir.Magnitude / 2)
+				tracer.Size = Vector3.new(0.05, 0.05, dir.Magnitude)
+			end
+		end)
+
+		-- Name tag
+		local billboard = Instance.new("BillboardGui")
+		billboard.Adornee = part
+		billboard.Size = UDim2.new(0, 100, 0, 50)
+		billboard.StudsOffset = Vector3.new(0, 2, 0)
+		billboard.AlwaysOnTop = true
+		billboard.Parent = part
+
+		local textLabel = Instance.new("TextLabel")
+		textLabel.Size = UDim2.new(1, 0, 1, 0)
+		textLabel.BackgroundTransparency = 1
+		textLabel.Text = part.Name
+		textLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
+		textLabel.TextStrokeTransparency = 0
+		textLabel.TextScaled = true
+		textLabel.Parent = billboard
+	end
+
+	-- Get keys from both folders
+	local keysFolders = {workspace:FindFirstChild("CellRoom") and workspace.CellRoom:FindFirstChild("Keys"),
+						 workspace:FindFirstChild("CellRoom") and workspace.CellRoom:FindFirstChild("Keys2")}
+
+	for _, folder in ipairs(keysFolders) do
+		if folder then
+			for _, key in ipairs(folder:GetChildren()) do
+				if key:IsA("BasePart") then
+					createESP(key)
+				end
+			end
+		end
+	end
+
+	print("Key ESP activated!")
 end)
 
 -- Full Bright
