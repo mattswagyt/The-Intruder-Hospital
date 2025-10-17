@@ -187,9 +187,85 @@ createButton("Full Bright", function()
 	print("Full Bright activated!")
 end)
 
--- God Mode (WIP)
+-- Shift to Run
+createButton("Shift to Run", function()
+	print("Shift to Run activated!")
+
+	local Players = game:GetService("Players")
+	local UIS = game:GetService("UserInputService")
+	local LocalPlayer = Players.LocalPlayer
+	local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+	local humanoid = character:WaitForChild("Humanoid")
+
+	local normalSpeed = 8  -- Normal walking speed
+	local runSpeed = 16    -- Speed when holding Shift
+
+	-- Keep track of whether Shift is held
+	local shiftHeld = false
+
+	-- Detect key press
+	UIS.InputBegan:Connect(function(input, gameProcessed)
+		if gameProcessed then return end
+		if input.KeyCode == Enum.KeyCode.LeftShift then
+			shiftHeld = true
+			humanoid.WalkSpeed = runSpeed
+		end
+	end)
+
+	-- Detect key release
+	UIS.InputEnded:Connect(function(input, gameProcessed)
+		if gameProcessed then return end
+		if input.KeyCode == Enum.KeyCode.LeftShift then
+			shiftHeld = false
+			humanoid.WalkSpeed = normalSpeed
+		end
+	end)
+
+	print("Shift to Run is ready! Hold Shift to run.")
+end)
+
 createButton("God Mode", function()
-	print("God Mode is being worked on!")
+	print("Activating God Mode...")
+
+	local Players = game:GetService("Players")
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	local LocalPlayer = Players.LocalPlayer
+	local playerName = LocalPlayer.Name
+
+	-- Dynamically find the player's folder in workspace
+	local playerFolder = workspace:FindFirstChild(playerName)
+
+	local pathsToDestroy = {
+		playerFolder and playerFolder:FindFirstChild("Health"),
+		playerFolder and playerFolder:FindFirstChild("isDead"),
+		workspace:FindFirstChild("ShameTeleport"),
+		game:GetService("StarterGui"):FindFirstChild("Death"),
+		LocalPlayer:FindFirstChild("PlayerGui") and LocalPlayer.PlayerGui:FindFirstChild("Death"),
+		ReplicatedStorage:FindFirstChild("Die"),
+		ReplicatedStorage:FindFirstChild("Scare"),
+		ReplicatedStorage:FindFirstChild("activateDeath"),
+		ReplicatedStorage:FindFirstChild("clientPartnerDeath"),
+		ReplicatedStorage:FindFirstChild("partnerDie"),
+		ReplicatedStorage:FindFirstChild("playerDeath"),
+		LocalPlayer:FindFirstChild("Backpack") and LocalPlayer.Backpack:FindFirstChild("DeathShake"),
+		game:GetService("StarterPack"):FindFirstChild("DeathShake"),
+		LocalPlayer:FindFirstChild("PlayerGui") and LocalPlayer.PlayerGui:FindFirstChild("IntruderScript"),
+		game:GetService("StarterGui"):FindFirstChild("IntruderScript")
+	}
+
+	for _, obj in ipairs(pathsToDestroy) do
+		if obj then
+			obj:Destroy()
+		end
+	end
+
+	-- Set canExecute to false if it exists
+	local values = workspace:FindFirstChild("Values")
+	if values and values:FindFirstChild("canExecute") then
+		values.canExecute.Value = false
+	end
+
+	print("God Mode activated! All death/teleport scripts removed and canExecute set to false.")
 end)
 
 -- Break Anxiety (WIP)
@@ -202,14 +278,38 @@ createButton("Win Game (WIP)", function()
 	print("Win Game function is being worked on!")
 end)
 
--- Make Easy Mode (WIP)
+-- Make Easy Mode
 createButton("Make Easy Mode", function()
-	print("Easy Mode setup is being worked on!")
+	print("Activating Easy Mode...")
+
+	local values = workspace:FindFirstChild("Values")
+	if values then
+		if values:FindFirstChild("isEasyMode") then
+			values.isEasyMode.Value = true
+		end
+		if values:FindFirstChild("isNightmareMode") then
+			values.isNightmareMode.Value = false
+		end
+	end
+
+	print("Easy Mode is now active!")
 end)
 
--- Make Nightmare Mode (WIP)
+-- Make Nightmare Mode
 createButton("Make Nightmare Mode", function()
-	print("Nightmare Mode setup is being worked on!")
+	print("Activating Nightmare Mode...")
+
+	local values = workspace:FindFirstChild("Values")
+	if values then
+		if values:FindFirstChild("isNightmareMode") then
+			values.isNightmareMode.Value = true
+		end
+		if values:FindFirstChild("isEasyMode") then
+			values.isEasyMode.Value = false
+		end
+	end
+
+	print("Nightmare Mode is now active!")
 end)
 
 ---------------------------------------------------------------------
