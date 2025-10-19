@@ -241,6 +241,96 @@ createButton("Key ESP", function()
 	print("Key ESP activated!")
 end)
 
+-- Collect Silver Key
+createButton("Collect Silver Key", function()
+	print("Collecting Silver Key...")
+
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	local Players = game:GetService("Players")
+	local LocalPlayer = Players.LocalPlayer
+	local Backpack = LocalPlayer:WaitForChild("Backpack")
+	local playerModel = workspace:WaitForChild(LocalPlayer.Name)
+
+	local silverKey = ReplicatedStorage:FindFirstChild("Key")
+	if not silverKey then
+		warn("Silver Key not found in ReplicatedStorage!")
+		return
+	end
+
+	local keyClone = silverKey:Clone()
+	keyClone.Parent = Backpack
+
+	keyClone.Equipped:Connect(function()
+		keyClone.Parent = playerModel
+	end)
+
+	keyClone.Unequipped:Connect(function()
+		keyClone.Parent = Backpack
+	end)
+
+	print("Silver Key collected and functional!")
+end)
+
+-- Collect Gold Key
+createButton("Collect Gold Key", function()
+	print("Collecting Gold Key...")
+
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	local Players = game:GetService("Players")
+	local LocalPlayer = Players.LocalPlayer
+	local Backpack = LocalPlayer:WaitForChild("Backpack")
+	local playerModel = workspace:WaitForChild(LocalPlayer.Name)
+
+	local goldKey = ReplicatedStorage:FindFirstChild("Key2")
+	if not goldKey then
+		warn("Gold Key not found in ReplicatedStorage!")
+		return
+	end
+
+	local keyClone = goldKey:Clone()
+	keyClone.Parent = Backpack
+
+	keyClone.Equipped:Connect(function()
+		keyClone.Parent = playerModel
+	end)
+
+	keyClone.Unequipped:Connect(function()
+		keyClone.Parent = Backpack
+	end)
+
+	print("Gold Key collected and functional!")
+end)
+
+-- Collect Wrench
+createButton("Collect Wrench", function()
+	print("Collecting Wrench...")
+
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	local Players = game:GetService("Players")
+	local LocalPlayer = Players.LocalPlayer
+	local Backpack = LocalPlayer:WaitForChild("Backpack")
+	local playerModel = workspace:WaitForChild(LocalPlayer.Name)
+
+	local wrench = ReplicatedStorage:FindFirstChild("Wrench")
+	if not wrench then
+		warn("Wrench not found in ReplicatedStorage!")
+		return
+	end
+
+	local wrenchClone = wrench:Clone()
+	wrenchClone.Parent = Backpack
+
+	wrenchClone.Equipped:Connect(function()
+		wrenchClone.Parent = playerModel
+	end)
+
+	wrenchClone.Unequipped:Connect(function()
+		wrenchClone.Parent = Backpack
+	end)
+
+	print("Wrench collected and functional!")
+end)
+
 -- Full Bright
 createButton("Full Bright", function()
 	Lighting.Brightness = 5
