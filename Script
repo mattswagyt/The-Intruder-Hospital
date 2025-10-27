@@ -167,169 +167,71 @@ createButton("Teleport to Employee-Only Room", function()
 	print("Teleported to Employee-Only Room!")
 end)
 
--- Key ESP
-createButton("Key ESP", function()
-	print("Activating Key ESP...")
-
-	local Players = game:GetService("Players")
-	local LocalPlayer = Players.LocalPlayer
-	local Camera = workspace.CurrentCamera
-
-	-- Function to create ESP for a part
-	local function createESP(part)
-		if not part then return end
-
-		-- SelectionBox to outline the part
-		local box = Instance.new("SelectionBox")
-		box.Adornee = part
-		box.LineThickness = 0.05
-		box.SurfaceTransparency = 1
-		box.Color3 = Color3.fromRGB(255, 255, 0) -- Yellow
-		box.Parent = part
-
-		-- Tracer: Line from camera to the key
-		local tracer = Instance.new("Part")
-		tracer.Anchored = true
-		tracer.CanCollide = false
-		tracer.Transparency = 0.5
-		tracer.Size = Vector3.new(0.05, 0.05, (part.Position - Camera.CFrame.Position).Magnitude)
-		tracer.Color = Color3.fromRGB(255, 255, 0)
-		tracer.Material = Enum.Material.Neon
-		tracer.Parent = workspace
-
-		local runService = game:GetService("RunService")
-		runService.RenderStepped:Connect(function()
-			if part and tracer then
-				local dir = part.Position - Camera.CFrame.Position
-				tracer.CFrame = CFrame.new(Camera.CFrame.Position, part.Position) * CFrame.new(0, 0, -dir.Magnitude / 2)
-				tracer.Size = Vector3.new(0.05, 0.05, dir.Magnitude)
-			end
-		end)
-
-		-- Name tag
-		local billboard = Instance.new("BillboardGui")
-		billboard.Adornee = part
-		billboard.Size = UDim2.new(0, 100, 0, 50)
-		billboard.StudsOffset = Vector3.new(0, 2, 0)
-		billboard.AlwaysOnTop = true
-		billboard.Parent = part
-
-		local textLabel = Instance.new("TextLabel")
-		textLabel.Size = UDim2.new(1, 0, 1, 0)
-		textLabel.BackgroundTransparency = 1
-		textLabel.Text = part.Name
-		textLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
-		textLabel.TextStrokeTransparency = 0
-		textLabel.TextScaled = true
-		textLabel.Parent = billboard
-	end
-
-	-- Get keys from both folders
-	local keysFolders = {workspace:FindFirstChild("CellRoom") and workspace.CellRoom:FindFirstChild("Keys"),
-						 workspace:FindFirstChild("CellRoom") and workspace.CellRoom:FindFirstChild("Keys2")}
-
-	for _, folder in ipairs(keysFolders) do
-		if folder then
-			for _, key in ipairs(folder:GetChildren()) do
-				if key:IsA("BasePart") then
-					createESP(key)
-				end
-			end
-		end
-	end
-
-	print("Key ESP activated!")
+createButton("Teleport to Office", function()
+	teleportTo(Vector3.new(178, 4, -69))
+	print("Teleported to the Office!")
 end)
 
 -- Collect Silver Key
 createButton("Collect Silver Key", function()
-	print("Collecting Silver Key...")
+    local Players = game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local character = LocalPlayer.Character
 
-	local ReplicatedStorage = game:GetService("ReplicatedStorage")
-	local Players = game:GetService("Players")
-	local LocalPlayer = Players.LocalPlayer
-	local Backpack = LocalPlayer:WaitForChild("Backpack")
-	local playerModel = workspace:WaitForChild(LocalPlayer.Name)
+    if not character or not character:FindFirstChild("HumanoidRootPart") then
+        warn("Character or HumanoidRootPart not found!")
+        return
+    end
 
-	local silverKey = ReplicatedStorage:FindFirstChild("Key")
-	if not silverKey then
-		warn("Silver Key not found in ReplicatedStorage!")
-		return
-	end
+    local keyFolder = workspace:FindFirstChild("CellRoom") and workspace.CellRoom:FindFirstChild("Keys")
+    if not keyFolder then
+        warn("Silver Key folder not found!")
+        return
+    end
 
-	local keyClone = silverKey:Clone()
-	keyClone.Parent = Backpack
+    local keyPart = keyFolder:FindFirstChild("Key")
+    if not keyPart then
+        warn("No Key found in Silver Key folder!")
+        return
+    end
 
-	keyClone.Equipped:Connect(function()
-		keyClone.Parent = playerModel
-	end)
+    local keyClone = keyPart:Clone()
+    keyClone.Parent = workspace
+    keyClone.CFrame = character.HumanoidRootPart.CFrame
 
-	keyClone.Unequipped:Connect(function()
-		keyClone.Parent = Backpack
-	end)
-
-	print("Silver Key collected and functional!")
+    print("Silver Key cloned to your location!")
 end)
 
 -- Collect Gold Key
 createButton("Collect Gold Key", function()
-	print("Collecting Gold Key...")
+    local Players = game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local character = LocalPlayer.Character
 
-	local ReplicatedStorage = game:GetService("ReplicatedStorage")
-	local Players = game:GetService("Players")
-	local LocalPlayer = Players.LocalPlayer
-	local Backpack = LocalPlayer:WaitForChild("Backpack")
-	local playerModel = workspace:WaitForChild(LocalPlayer.Name)
+    if not character or not character:FindFirstChild("HumanoidRootPart") then
+        warn("Character or HumanoidRootPart not found!")
+        return
+    end
 
-	local goldKey = ReplicatedStorage:FindFirstChild("Key2")
-	if not goldKey then
-		warn("Gold Key not found in ReplicatedStorage!")
-		return
-	end
+    local keyFolder = workspace:FindFirstChild("CellRoom") and workspace.CellRoom:FindFirstChild("Keys2")
+    if not keyFolder then
+        warn("Gold Key folder not found!")
+        return
+    end
 
-	local keyClone = goldKey:Clone()
-	keyClone.Parent = Backpack
+    local keyPart = keyFolder:FindFirstChild("Key")
+    if not keyPart then
+        warn("No Key found in Gold Key folder!")
+        return
+    end
 
-	keyClone.Equipped:Connect(function()
-		keyClone.Parent = playerModel
-	end)
+    local keyClone = keyPart:Clone()
+    keyClone.Parent = workspace
+    keyClone.CFrame = character.HumanoidRootPart.CFrame
 
-	keyClone.Unequipped:Connect(function()
-		keyClone.Parent = Backpack
-	end)
-
-	print("Gold Key collected and functional!")
+    print("Gold Key cloned to your location!")
 end)
 
--- Collect Wrench
-createButton("Collect Wrench", function()
-	print("Collecting Wrench...")
-
-	local ReplicatedStorage = game:GetService("ReplicatedStorage")
-	local Players = game:GetService("Players")
-	local LocalPlayer = Players.LocalPlayer
-	local Backpack = LocalPlayer:WaitForChild("Backpack")
-	local playerModel = workspace:WaitForChild(LocalPlayer.Name)
-
-	local wrench = ReplicatedStorage:FindFirstChild("Wrench")
-	if not wrench then
-		warn("Wrench not found in ReplicatedStorage!")
-		return
-	end
-
-	local wrenchClone = wrench:Clone()
-	wrenchClone.Parent = Backpack
-
-	wrenchClone.Equipped:Connect(function()
-		wrenchClone.Parent = playerModel
-	end)
-
-	wrenchClone.Unequipped:Connect(function()
-		wrenchClone.Parent = Backpack
-	end)
-
-	print("Wrench collected and functional!")
-end)
 
 -- Full Bright
 createButton("Full Bright", function()
