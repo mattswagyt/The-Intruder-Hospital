@@ -172,9 +172,8 @@ createButton("Teleport to Office", function()
 	print("Teleported to the Office!")
 end)
 
--- Function to bring a key to player if highlight is enabled
-local function bringKeyToPlayer(keyFolder)
-    local Players = game:GetService("Players")
+-- Function to bring all keys with highlight enabled to player
+local function bringKeysToPlayer(keyFolder)
     local player = Players.LocalPlayer
     local character = player.Character
 
@@ -188,28 +187,35 @@ local function bringKeyToPlayer(keyFolder)
         return
     end
 
+    local movedCount = 0
     for _, key in pairs(keyFolder:GetChildren()) do
         if key.Name == "Key" then
             local highlight = key:FindFirstChild("highlight")
             if highlight and highlight.Enabled then
                 key.CFrame = character.HumanoidRootPart.CFrame
+                movedCount = movedCount + 1
                 print("Key brought to your location:", key:GetFullName())
-                break -- stop after the first valid key
             end
         end
+    end
+
+    if movedCount == 0 then
+        print("No highlighted keys found in folder:", keyFolder:GetFullName())
+    else
+        print("Total keys moved:", movedCount)
     end
 end
 
 -- Collect Silver Key
 createButton("Collect Silver Key", function()
     local keyFolder = workspace:FindFirstChild("CellRoom") and workspace.CellRoom:FindFirstChild("Keys")
-    bringKeyToPlayer(keyFolder)
+    bringKeysToPlayer(keyFolder)
 end)
 
 -- Collect Gold Key
 createButton("Collect Gold Key", function()
     local keyFolder = workspace:FindFirstChild("CellRoom") and workspace.CellRoom:FindFirstChild("Keys2")
-    bringKeyToPlayer(keyFolder)
+    bringKeysToPlayer(keyFolder)
 end)
 
 
