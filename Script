@@ -172,7 +172,7 @@ createButton("Teleport to Office", function()
 	print("Teleported to the Office!")
 end)
 
--- Function to bring all keys with highlight enabled to player
+-- Function to bring all keys with highlight enabled and visible to player
 local function bringKeysToPlayer(keyFolder)
     local player = Players.LocalPlayer
     local character = player.Character
@@ -191,7 +191,7 @@ local function bringKeysToPlayer(keyFolder)
     for _, key in pairs(keyFolder:GetChildren()) do
         if key.Name == "Key" then
             local highlight = key:FindFirstChild("Highlight")
-            if highlight and highlight.Enabled then
+            if highlight and highlight.Enabled and key.Transparency == 0 then
                 key.CFrame = character.HumanoidRootPart.CFrame
                 movedCount = movedCount + 1
                 print("Key brought to your location:", key:GetFullName())
@@ -200,7 +200,7 @@ local function bringKeysToPlayer(keyFolder)
     end
 
     if movedCount == 0 then
-        print("No highlighted keys found in folder:", keyFolder:GetFullName())
+        print("No visible highlighted keys found in folder:", keyFolder:GetFullName())
     else
         print("Total keys moved:", movedCount)
     end
