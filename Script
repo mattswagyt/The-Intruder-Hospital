@@ -190,7 +190,7 @@ local function bringKeysToPlayer(keyFolder)
     local movedCount = 0
     for _, key in pairs(keyFolder:GetChildren()) do
         if key.Name == "Key" then
-            local highlight = key:FindFirstChild("highlight")
+            local highlight = key:FindFirstChild("Highlight")
             if highlight and highlight.Enabled then
                 key.CFrame = character.HumanoidRootPart.CFrame
                 movedCount = movedCount + 1
