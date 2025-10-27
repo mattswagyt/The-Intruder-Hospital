@@ -172,64 +172,44 @@ createButton("Teleport to Office", function()
 	print("Teleported to the Office!")
 end)
 
--- Collect Silver Key
-createButton("Collect Silver Key", function()
+-- Function to bring a key to player if highlight is enabled
+local function bringKeyToPlayer(keyFolder)
     local Players = game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    local character = LocalPlayer.Character
+    local player = Players.LocalPlayer
+    local character = player.Character
 
     if not character or not character:FindFirstChild("HumanoidRootPart") then
         warn("Character or HumanoidRootPart not found!")
         return
     end
 
-    local keyFolder = workspace:FindFirstChild("CellRoom") and workspace.CellRoom:FindFirstChild("Keys")
     if not keyFolder then
-        warn("Silver Key folder not found!")
+        warn("Key folder not found!")
         return
     end
 
-    local keyPart = keyFolder:FindFirstChild("Key")
-    if not keyPart then
-        warn("No Key found in Silver Key folder!")
-        return
+    for _, key in pairs(keyFolder:GetChildren()) do
+        if key.Name == "Key" then
+            local highlight = key:FindFirstChild("highlight")
+            if highlight and highlight.Enabled then
+                key.CFrame = character.HumanoidRootPart.CFrame
+                print("Key brought to your location:", key:GetFullName())
+                break -- stop after the first valid key
+            end
+        end
     end
+end
 
-    local keyClone = keyPart:Clone()
-    keyClone.Parent = workspace
-    keyClone.CFrame = character.HumanoidRootPart.CFrame
-
-    print("Silver Key cloned to your location!")
+-- Collect Silver Key
+createButton("Collect Silver Key", function()
+    local keyFolder = workspace:FindFirstChild("CellRoom") and workspace.CellRoom:FindFirstChild("Keys")
+    bringKeyToPlayer(keyFolder)
 end)
 
 -- Collect Gold Key
 createButton("Collect Gold Key", function()
-    local Players = game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    local character = LocalPlayer.Character
-
-    if not character or not character:FindFirstChild("HumanoidRootPart") then
-        warn("Character or HumanoidRootPart not found!")
-        return
-    end
-
     local keyFolder = workspace:FindFirstChild("CellRoom") and workspace.CellRoom:FindFirstChild("Keys2")
-    if not keyFolder then
-        warn("Gold Key folder not found!")
-        return
-    end
-
-    local keyPart = keyFolder:FindFirstChild("Key")
-    if not keyPart then
-        warn("No Key found in Gold Key folder!")
-        return
-    end
-
-    local keyClone = keyPart:Clone()
-    keyClone.Parent = workspace
-    keyClone.CFrame = character.HumanoidRootPart.CFrame
-
-    print("Gold Key cloned to your location!")
+    bringKeyToPlayer(keyFolder)
 end)
 
 
