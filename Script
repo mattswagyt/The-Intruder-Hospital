@@ -172,8 +172,8 @@ createButton("Teleport to Office", function()
 	print("Teleported to the Office!")
 end)
 
--- Function to bring all keys with highlight enabled and visible to player
-local function bringKeysToPlayer(keyFolder)
+-- Function to teleport player to all keys with highlight enabled and visible
+local function teleportToKeys(keyFolder)
     local player = Players.LocalPlayer
     local character = player.Character
 
@@ -187,35 +187,37 @@ local function bringKeysToPlayer(keyFolder)
         return
     end
 
-    local movedCount = 0
+    local teleportedCount = 0
     for _, key in pairs(keyFolder:GetChildren()) do
         if key.Name == "Key" then
             local highlight = key:FindFirstChild("Highlight")
             if highlight and highlight.Enabled and key.Transparency == 0 then
-                key.CFrame = character.HumanoidRootPart.CFrame
-                movedCount = movedCount + 1
-                print("Key brought to your location:", key:GetFullName())
+                -- Teleport player to key
+                character.HumanoidRootPart.CFrame = key.CFrame + Vector3.new(0, 3, 0) -- slight offset above key
+                teleportedCount = teleportedCount + 1
+                print("Teleported to key:", key:GetFullName())
+                break -- stop after first key, remove if you want to teleport to all keys in succession
             end
         end
     end
 
-    if movedCount == 0 then
+    if teleportedCount == 0 then
         print("No visible highlighted keys found in folder:", keyFolder:GetFullName())
     else
-        print("Total keys moved:", movedCount)
+        print("Total teleports performed:", teleportedCount)
     end
 end
 
 -- Collect Silver Key
 createButton("Collect Silver Key", function()
     local keyFolder = workspace:FindFirstChild("CellRoom") and workspace.CellRoom:FindFirstChild("Keys")
-    bringKeysToPlayer(keyFolder)
+    teleportToKeys(keyFolder)
 end)
 
 -- Collect Gold Key
 createButton("Collect Gold Key", function()
     local keyFolder = workspace:FindFirstChild("CellRoom") and workspace.CellRoom:FindFirstChild("Keys2")
-    bringKeysToPlayer(keyFolder)
+    teleportToKeys(keyFolder)
 end)
 
 
@@ -266,48 +268,39 @@ createButton("Shift to Run", function()
 	print("Shift to Run is ready! Hold Shift to run.")
 end)
 
-createButton("God Mode", function()
-	print("Activating God Mode...")
+createButton("Intruder Ignores You", function()
+    print("Activating Intruder Ignores You...")
 
-	local Players = game:GetService("Players")
-	local ReplicatedStorage = game:GetService("ReplicatedStorage")
-	local LocalPlayer = Players.LocalPlayer
-	local playerName = LocalPlayer.Name
+    local Players = game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
 
-	-- Dynamically find the player's folder in workspace
-	local playerFolder = workspace:FindFirstChild(playerName)
+    -- Dynamically find the player's folder in workspace using their username
+    local playerFolder = workspace:FindFirstChild(LocalPlayer.Name)
 
-	local pathsToDestroy = {
-		playerFolder and playerFolder:FindFirstChild("Health"),
-		playerFolder and playerFolder:FindFirstChild("isDead"),
-		workspace:FindFirstChild("ShameTeleport"),
-		game:GetService("StarterGui"):FindFirstChild("Death"),
-		LocalPlayer:FindFirstChild("PlayerGui") and LocalPlayer.PlayerGui:FindFirstChild("Death"),
-		ReplicatedStorage:FindFirstChild("Die"),
-		ReplicatedStorage:FindFirstChild("Scare"),
-		ReplicatedStorage:FindFirstChild("activateDeath"),
-		ReplicatedStorage:FindFirstChild("clientPartnerDeath"),
-		ReplicatedStorage:FindFirstChild("partnerDie"),
-		ReplicatedStorage:FindFirstChild("playerDeath"),
-		LocalPlayer:FindFirstChild("Backpack") and LocalPlayer.Backpack:FindFirstChild("DeathShake"),
-		game:GetService("StarterPack"):FindFirstChild("DeathShake"),
-		LocalPlayer:FindFirstChild("PlayerGui") and LocalPlayer.PlayerGui:FindFirstChild("IntruderScript"),
-		game:GetService("StarterGui"):FindFirstChild("IntruderScript")
-	}
+    -- Paths to destroy
+    local pathsToDestroy = {
+        workspace:FindFirstChild("ShameTeleport"),
+        playerFolder and playerFolder:FindFirstChild("Health"),
+        playerFolder and playerFolder:FindFirstChild("isDead"),
+        LocalPlayer:FindFirstChild("Backpack") and LocalPlayer.Backpack:FindFirstChild("DeathShake"),
+        game:GetService("StarterPack"):FindFirstChild("DeathShake"),
+        LocalPlayer:FindFirstChild("PlayerGui") and LocalPlayer.PlayerGui:FindFirstChild("Death"),
+        game:GetService("StarterGui"):FindFirstChild("Death")
+    }
 
-	for _, obj in ipairs(pathsToDestroy) do
-		if obj then
-			obj:Destroy()
-		end
-	end
+    for _, obj in ipairs(pathsToDestroy) do
+        if obj then
+            obj:Destroy()
+        end
+    end
 
-	-- Set canExecute to false if it exists
-	local values = workspace:FindFirstChild("Values")
-	if values and values:FindFirstChild("canExecute") then
-		values.canExecute.Value = false
-	end
+    -- Set canExecute to false if it exists
+    local values = workspace:FindFirstChild("Values")
+    if values and values:FindFirstChild("canExecute") then
+        values.canExecute.Value = false
+    end
 
-	print("God Mode activated! All death/teleport scripts removed and canExecute set to false.")
+    print("Intruder Ignores You activated! Specified scripts removed and canExecute set to false.")
 end)
 
 -- Break Anxiety (WIP)
